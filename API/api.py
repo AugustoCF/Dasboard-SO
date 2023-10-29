@@ -4,6 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 # uvicorn api:app --reload
+
+# Middleware: Configuracao de permissoes para requisicoes HTTP de diferentes dominios
 origins = [
     "http://localhost",
     "http://localhost:8080",
@@ -18,6 +20,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Implementacao da funcao para mandar os dados dos processos do diretorio /proc
 @app.post("/getprocess/")
 def getprocess():
     proc_directory = '/proc'
@@ -34,6 +37,7 @@ def getprocess():
 
     return status_response
 
+# Implementacao da funcao para mandar os dados da memoria, /proc/meminfo
 @app.post("/getmeminfo/")
 def getmeminfo():
     proc_directory = '/proc'
@@ -45,6 +49,7 @@ def getmeminfo():
 
     return status_info
 
+# Implementacao da funcao para mandar os dados do processador, /proc/cpuinfo
 @app.post("/getcpuinfo/")
 def getcpuinfo():
     proc_directory = '/proc'

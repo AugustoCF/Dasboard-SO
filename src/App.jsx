@@ -9,13 +9,15 @@ import ProcessDialog from "./Dialog";
 // npx vite
 ChartJS.register(ArcElement, Tooltip, Legend);
 
+// Funcao criada para pegar atraves da requisicao POST, os dados enviados pelo backend
 async function getData() { // 2
   const responseProcess = await axios.post('http://127.0.0.1:8000/getprocess/');
   const responseMem = await axios.post('http://127.0.0.1:8000/getmeminfo/');
   const responseCPU = await axios.post('http://127.0.0.1:8000/getcpuinfo/');
-  return({"process" :responseProcess.data , "mem" : responseMem.data, "cpu" : responseCPU.data}); // {"process" :responseProcess.data , "mem" : responseMem.data}
+  return({"process" :responseProcess.data , "mem" : responseMem.data, "cpu" : responseCPU.data});
 }
 
+// Componente utilizado para mostrar titulo e valor
 function Status({title, ammount}) {
   return (
     <Grid item>
@@ -31,6 +33,7 @@ function Status({title, ammount}) {
   )
 }
 
+// Funcao utilizada para transformar os dados dos processos em um OBJETO
 function parseResponse(item) {
   let paramList = JSON.parse(JSON.stringify(item)).split("\n");
   let dataObj = {};
@@ -38,6 +41,7 @@ function parseResponse(item) {
   return dataObj;
 }
 
+// Funcao utilizada para transformar os dados do CpuInfo em um OBJETO
 function parseCPU (data) {
   if (typeof(data) === 'string') {
     const lines = data.split('\n');
@@ -63,6 +67,7 @@ function parseCPU (data) {
   }
 }
 
+// Funcao utilizada para transformar os dados do MemInfo em um OBJETO
 function parseMem (data) {
   if (typeof(data) === 'string') {
     const lines = data.split('\n');
@@ -81,10 +86,12 @@ function parseMem (data) {
   }
 }
 
+//Implementacao da Tabela do Dashboard
 function DataTable({dataList}) {
   const [open, setOpen] = useState(false);
   const [selectedProcess, setSelectedProcess] = useState({});
 
+  // Lidar com cliques em um processo individual
   const handleOpen = (process) => {
     setOpen(true);
     setSelectedProcess(process);
@@ -133,18 +140,16 @@ function DataTable({dataList}) {
   )
 }
 
-// 1 Criar estado
-// 2 Criar função para chamar rota
-// 3 Atualizar estado
-
 function App() {
-  const [process, setProcess] = useState([]);// 1
+  // Guarda os estados das variaveis
+  const [process, setProcess] = useState([]);
   const [mem, setMem] = useState([]);
   const [cpu, setCPU] = useState([]);
   const [count, setCount] = useState(0);
 
+  // Atualiza os dados
   const updateData = () => {
-    getData().then((res) => setProcess(res.process)); // 3
+    getData().then((res) => setProcess(res.process));
     getData().then((res) => setMem(res.mem));
     getData().then((res) => setCPU(res.cpu));
   }
@@ -152,6 +157,7 @@ function App() {
   const cpuObject = parseCPU(cpu);
   const memObject = parseMem(mem);
 
+  // Implementacao do Grafico de Donut
   const data_donut = {
     labels: ['Memória Utilizada', 'Memória Livre'],
     datasets: [
@@ -171,6 +177,7 @@ function App() {
     ],
   };
 
+  // Implementacao do segundo Grafico de Donut
   const data_donut2 = {
     labels: ['Memória Swap Utilizada', 'Memória Swap Livre'],
     datasets: [
@@ -190,6 +197,7 @@ function App() {
     ],
   };
 
+  // Controla a taxa de atualizacao dos dados por tempo. ex: 2000ms
   useEffect(() => {
     console.log(count);
     setTimeout(() => {
@@ -200,6 +208,7 @@ function App() {
   }, [count]);
 
   return (
+    // Criacao da pagina REACT
     <> {cpuObject ? 
     <Grid container style={{width: 1280, padding:"2rem"}} spacing={3} direction={'column'}>
       <Grid item>

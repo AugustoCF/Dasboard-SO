@@ -1,5 +1,6 @@
 import { Card, Dialog, Divider, Grid, Typography } from "@mui/material";
 
+// Implementacao do Dialog aberto ao clicar no processo
 function Status({title, ammount}) {
     return (
       <Grid item lg={6}>
